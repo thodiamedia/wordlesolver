@@ -318,6 +318,7 @@ function setupListeners() {
   });
   setupMultiInputContainerListers('matcher');
   setupMultiInputContainerListers('includer');
+  document.getElementById('menu-btn').addEventListener('click', () => document.body.classList.toggle('show-nav'));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
