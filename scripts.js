@@ -143,12 +143,13 @@ function shiftFocus(currInput, diff) {
   const desiredInputIndex = currInputIndex + diff;
 
   if (desiredInputIndex < 1 || desiredInputIndex > 5) {
-    return;
+    return null;
   }
 
   const desiredElement = document.getElementById(`matcher-${desiredInputIndex}`);
   desiredElement.focus();
   desiredElement.select();
+  return desiredElement;
 }
 
 /** Clean inputs in matcher elements */
@@ -176,6 +177,7 @@ function forEachMatcherInput(func) {
 
 /** Set listeners */
 function setupListeners() {
+  // TODO this function grew in scope and should be refactored
   document.getElementById('search').addEventListener('click', submitSearch);
   window.addEventListener('resize', updateFooterFloat);
   window.addEventListener('keyup', event => {
@@ -186,18 +188,55 @@ function setupListeners() {
     }
   });
   forEachMatcherInput(matcherInput => {
-    matcherInput.addEventListener('keyup', event => {
-      if (event.key === 'ArrowLeft') {
-        event.preventDefault();
+    matcherInput.addEventListener('keyup', e => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
         shiftFocus(matcherInput, -1);
       }
-      if (event.key === 'ArrowRight') {
-        event.preventDefault();
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
         shiftFocus(matcherInput, 1);
+      }
+    });
+    matcherInput.addEventListener('keydown', e => {
+      let translatedKeyValue = null;
+
+      // do not input invalid characters
+      if (!/[A-Za-z?]/.test(e.key)) {
+        translatedKeyValue = '';
+      }
+
+      // convert to uppercase
+      if (e.key.length === 1 && /[a-z]/.test(e.key)) {
+        translatedKeyValue = e.key.toUpperCase();
+      }
+
+      // update current field with translated input
+      if (translatedKeyValue !== null && matcherInput.selectionStart === 0) {
+        matcherInput.value = translatedKeyValue;
+        e.preventDefault();
+        return;
+      }
+
+      // update next field with current or translated input
+      if (
+        // if input is valid or translated:
+        ((translatedKeyValue !== null && translatedKeyValue !== '')
+        || (e.key.length === 1 && /[A-Za-z?]/.test(e.key)))
+        // if selection is at end of current textbox:
+        && matcherInput.selectionStart === 1
+      ) {
+        const newFocusedInput = shiftFocus(matcherInput, 1);
+        if (newFocusedInput !== null) {
+          newFocusedInput.value = translatedKeyValue;
+        }
       }
     });
     matcherInput.addEventListener('click', e => e.target.select());
     matcherInput.addEventListener('focus', e => e.target.select());
+
+     // prevent clicking with mac touchpad always resulting in right-click
+    matcherInput.addEventListener('contextmenu', e => e.preventDefault());
   });
 }
 

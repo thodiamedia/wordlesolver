@@ -140,7 +140,7 @@ fieldset {
 }
 
 .matcher-inputs-container input[type=text] {
-  width: 4em;
+  width: max(4em, 20%);
   text-align: center;
 }
 
