@@ -3,7 +3,7 @@ const OUTPUT_SCROLL_THRESHOLD = 0.8;
 ALLOWED_PATHS = ['4', '6', '7', '8']
 
 /** Get number of characters based on path */
-const path = window.location.pathname.replace('/', '');
+const path = window.location.pathname.replaceAll('/', '');
 const numCharsPath = ALLOWED_PATHS.includes(path) ? parseInt(path) : 5;
 
 let wordList;
