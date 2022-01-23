@@ -189,12 +189,11 @@ fieldset {
 }
 
 footer {
-  opacity: 0.8;
   width: 250px;
-  align-self: flex-end;
+  align-self: flex-start;
   margin-top: var(--vertical-margin);
   margin-bottom: var(--vertical-margin);
-  margin-right: max(5vw, calc(50vw - 500px));
+  margin-left: max(5vw, calc(50vw - 500px));
 }
 footer.floating {
   position: fixed;
@@ -203,8 +202,13 @@ footer.floating {
 
 footer div {
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   width: 100%;
+  opacity: 0.6;
+  transition: 250ms all;
+}
+footer div:hover {
+  opacity: 1.0;
 }
 
 footer div span.item {
@@ -212,5 +216,6 @@ footer div span.item {
 }
 
 footer div span.divider {
-  opacity: 0.3;
+  opacity: 0.4;
+  margin-right: var(--standard-margin);
 }
