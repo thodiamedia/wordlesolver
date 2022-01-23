@@ -104,6 +104,9 @@ function submitSearch() {
   });
 
   // display length error if necessary
+  if (results.length === 0) {
+    displayError('There are no words that match this criteria. Please double-check your inputs.')
+  }
   if (lengthError) {
     displayError(lengthError, true);
   }
