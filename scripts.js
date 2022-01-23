@@ -1,4 +1,5 @@
 const FILES_URL = '/words.b64.txt';
+const MAX_RESULTS = 200;
 
 let wordList;
 
@@ -41,6 +42,11 @@ function getPreparedInput(inputStr) {
 
 /** Submit a search and displays results */
 function submitSearch() {
+  if (!wordList) {
+    displayError('We are still loading the word dictionary, please try searching again');
+    return;
+  }
+
   // get inputs
   const matchInput = document.getElementById('matcher').value;
   const includeInput = document.getElementById('include').value;
@@ -60,11 +66,32 @@ function submitSearch() {
   }
 
   // display results
-  results.forEach(result => {
+  results.slice(0, MAX_RESULTS).forEach(result => {
     const resultElement = document.createElement('span');
     resultElement.innerText = result;
     output.appendChild(resultElement);
-  })
+  });
+
+  if (results.length > MAX_RESULTS) {
+    displayError(`Excluded ${results.length - MAX_RESULTS} additional results.`, true);
+  }
+}
+
+/** Displays an error message to the user */
+function displayError(message, keepPreviousOutput) {
+  // remove all previous output
+  const output = document.getElementById('output');
+  if (!keepPreviousOutput) {
+    while (output.firstChild) {
+      output.removeChild(output.firstChild);
+    }
+  }
+
+  // display error
+  const errorElement = document.createElement('span');
+  errorElement.classList.add('error')
+  errorElement.innerText = message;
+  output.appendChild(errorElement);
 }
 
 /** Set listeners */
