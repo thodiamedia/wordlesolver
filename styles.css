@@ -166,6 +166,11 @@ main {
 
 /* Footer Styles */
 
+#footer-marker {
+  width: 0;
+  height: 0;
+}
+
 footer {
   opacity: 0.8;
   width: 250px;

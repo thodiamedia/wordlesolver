@@ -47,8 +47,8 @@ function getPreparedInput(inputStr) {
 
 /** Submit a search and displays results */
 function submitSearch() {
-  // footer should stop floating once search is pressed
-  document.getElementById('footer').classList.remove('floating');
+  // update footer float after redraw
+  setTimeout(updateFooterFloat, 1);
 
   if (!wordList) {
     displayError('We are still loading the word dictionary, please try searching again');
@@ -118,12 +118,31 @@ function displayError(message, keepPreviousOutput) {
   output.appendChild(errorElement);
 }
 
+/** Update the footer's floating state depending on whether it would block page content */
+function updateFooterFloat() {
+  const footer = document.getElementById('footer');
+  const footerMarker = document.getElementById('footer-marker');
+
+  const windowHeight = window.innerHeight;
+  const footerHeight = footer.getBoundingClientRect().height + 0.1 * windowHeight;
+  const footerMarkerPosition = footerMarker.getBoundingClientRect().top;
+
+  if (footerMarkerPosition + footerHeight > windowHeight) {
+    footer.classList.remove('floating');
+  }
+  else {
+    footer.classList.add('floating');
+  }
+}
+
 /** Set listeners */
 function setupListeners() {
   document.getElementById('search').addEventListener('click', submitSearch);
+  window.addEventListener('resize', updateFooterFloat);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   loadWordList();
   setupListeners();
+  updateFooterFloat();
 });
