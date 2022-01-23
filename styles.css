@@ -55,11 +55,17 @@ body > * {
 
 header > h1,
 .input-container label,
+.input-container legend,
 #search,
 .showcase-text {
   font-weight: 700;
   letter-spacing: 0.2rem;
   text-transform: uppercase;
+}
+
+.flex-break {
+  height: 0;
+  width: 100%;
 }
 
 /* Header Styles */
@@ -90,7 +96,6 @@ main {
   flex: 1;
 }
 
-.matcher-container,
 #output {
   min-width: 100%;
 }
@@ -103,7 +108,8 @@ main {
   width: 100%;
 }
 
-.input-container label {
+.input-container label,
+.input-container legend {
   font-size: 1.3em;
 }
 
@@ -116,6 +122,26 @@ main {
   display: block;
   margin-top: 0.2em;
   font-style: italic;
+}
+
+fieldset {
+  border: 0;
+}
+
+.matcher-container {
+  width: auto;
+  align-self: center;
+  margin-bottom: var(--vertical-margin);
+}
+
+.matcher-inputs-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.matcher-inputs-container input[type=text] {
+  width: 4em;
+  text-align: center;
 }
 
 #search {

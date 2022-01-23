@@ -55,14 +55,16 @@ function submitSearch() {
     return;
   }
 
-  // get inputs
-  const matchInput = document.getElementById('matcher').value;
+  // get matcher input
+  cleanMatcherElements();
+  let matchInput = '';
+  forEachMatcherInput(matcherInput => matchInput += matcherInput.value);
   const includeInput = document.getElementById('include').value;
   const excludeInput = document.getElementById('exclude').value;
 
   // get results
   let results = getMatchingWords(
-    matchInput.toLowerCase(),
+    matchInput.toLowerCase().replaceAll('?', '.'),
     getPreparedInput(includeInput),
     getPreparedInput(excludeInput)
   );
@@ -135,16 +137,67 @@ function updateFooterFloat() {
   }
 }
 
+/** Shift focus among matcher input elements */
+function shiftFocus(currInput, diff) {
+  const currInputIndex = parseInt(currInput.id.split('-')[1]);
+  const desiredInputIndex = currInputIndex + diff;
+
+  if (desiredInputIndex < 1 || desiredInputIndex > 5) {
+    return;
+  }
+
+  const desiredElement = document.getElementById(`matcher-${desiredInputIndex}`);
+  desiredElement.focus();
+  desiredElement.select();
+}
+
+/** Clean inputs in matcher elements */
+function cleanMatcherElements() {
+  forEachMatcherInput(matcherInput => {
+    const value = matcherInput.value;
+    if (value === '') {
+      matcherInput.value = '?';
+    }
+    if (/[a-z]/.test(value)) {
+      matcherInput.value = value.toUpperCase();
+    }
+    if (!/[A-Za-z?]/.test(value)) {
+      matcherInput.value = '?';
+    }
+  });
+}
+
+/** Execute the provided function, passing in each matcher input */
+function forEachMatcherInput(func) {
+  [1, 2, 3, 4, 5]
+    .map(i => document.getElementById(`matcher-${i}`))
+    .forEach(func);
+}
+
 /** Set listeners */
 function setupListeners() {
   document.getElementById('search').addEventListener('click', submitSearch);
   window.addEventListener('resize', updateFooterFloat);
-  window.addEventListener('keyup', function(event) {
-    if (event.keyCode === 13) {
+  window.addEventListener('keyup', event => {
+    if (event.key === 'enter') {
       // search when enter is pressed
       event.preventDefault();
       submitSearch();
     }
+  });
+  forEachMatcherInput(matcherInput => {
+    matcherInput.addEventListener('keyup', event => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        shiftFocus(matcherInput, -1);
+      }
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        shiftFocus(matcherInput, 1);
+      }
+    });
+    matcherInput.addEventListener('click', e => e.target.select());
+    matcherInput.addEventListener('focus', e => e.target.select());
   });
 }
 

@@ -12,11 +12,19 @@
       <p>Efficiently complete Wordle puzzles with this solver.</p>
     </header>
     <main>
-      <div class="input-container matcher-container">
-        <label for="matcher">Matcher</label>
-        <input id="matcher" type="text" />
-        <span>Enter the known letters, with ? for wildcard</span>
-      </div>
+      <fieldset class="input-container matcher-container">
+        <legend>Matcher</legend>
+        <div class="matcher-inputs-container">
+          <input id="matcher-1" type="text" maxlength="1" value="?" />
+          <input id="matcher-2" type="text" maxlength="1" value="?" />
+          <input id="matcher-3" type="text" maxlength="1" value="?" />
+          <input id="matcher-4" type="text" maxlength="1" value="?" />
+          <input id="matcher-5" type="text" maxlength="1" value="?" />
+        </div>
+        <span>Enter the known letters, with ? for unknown letters</span>
+      </fieldset>
+
+      <div class="flex-break"></div>
 
       <div class="input-container include-container">
         <label for="include">Included Letters</label>
