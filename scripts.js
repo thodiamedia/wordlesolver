@@ -61,7 +61,7 @@ function submitSearch() {
   const excludeInput = document.getElementById('exclude').value;
 
   // get results
-  const results = getMatchingWords(
+  let results = getMatchingWords(
     getPreparedInput(matchInput),
     getPreparedInput(includeInput),
     getPreparedInput(excludeInput)
@@ -73,6 +73,14 @@ function submitSearch() {
     output.removeChild(output.firstChild);
   }
 
+  // limit number of results to display if necessary
+  let lengthError;
+  if (results.length > MAX_RESULTS) {
+    lengthError = `Excluded ${results.length - MAX_RESULTS} additional results.`;
+    const interval = Math.round(results.length / MAX_RESULTS);
+    results = results.filter((_, index) => index % interval == 0);
+  }
+
   // display results
   results.slice(0, MAX_RESULTS).forEach(result => {
     const resultElement = document.createElement('span');
@@ -80,8 +88,9 @@ function submitSearch() {
     output.appendChild(resultElement);
   });
 
-  if (results.length > MAX_RESULTS) {
-    displayError(`Excluded ${results.length - MAX_RESULTS} additional results.`, true);
+  // display length error if necessary
+  if (lengthError) {
+    displayError(lengthError, true);
   }
 
   // scroll to output section if it is low enough on screen
