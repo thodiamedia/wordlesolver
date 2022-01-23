@@ -11,6 +11,10 @@ function loadWordList() {
     .then(data => {
       wordList = atob(data).split(',')
       console.log(`Got word list with ${wordList.length} words`);
+    })
+    .catch(error => {
+      console.error(error);
+      displayError('There was a problem loading the word dictionary. Please refresh the page to try again.');
     });
 }
 
