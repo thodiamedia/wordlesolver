@@ -151,7 +151,7 @@ function updateFooterFloat() {
 
   const windowHeight = window.innerHeight;
   const footerHeight = footer.getBoundingClientRect().height + 0.1 * windowHeight;
-  const footerMarkerPosition = footerMarker.getBoundingClientRect().top;
+  const footerMarkerPosition = footerMarker.getBoundingClientRect().top + window.scrollY;
 
   if (footerMarkerPosition + footerHeight > windowHeight) {
     footer.classList.remove('floating');
