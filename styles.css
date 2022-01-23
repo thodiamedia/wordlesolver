@@ -216,7 +216,6 @@ fieldset {
 }
 
 .multi-input-container {
-  width: auto;
   align-self: center;
   margin-bottom: var(--vertical-margin);
 }
