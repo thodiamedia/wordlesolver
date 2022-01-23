@@ -139,6 +139,13 @@ function updateFooterFloat() {
 function setupListeners() {
   document.getElementById('search').addEventListener('click', submitSearch);
   window.addEventListener('resize', updateFooterFloat);
+  window.addEventListener('keyup', function(event) {
+    if (event.keyCode === 13) {
+      // search when enter is pressed
+      event.preventDefault();
+      submitSearch();
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
