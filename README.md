@@ -1,3 +1,5 @@
+![Banner with text "wordle.tools - easy, fast wordle solver!"](assets/wordle.tools-cover.png)
+
 # `wordle.tools`
 
 Efficiently complete Wordle puzzles with this solver! [Try it yourself at wordle.tools](https://wordle.tools)
@@ -15,6 +17,8 @@ wordle.tools is a straightforward project:
 ## Fun Facts
 
 * wordle.tools supports IPv6!
+* wordle.tools matches your system's light mode/dark mode preferences!
+* wordle.tools is responsive!
 
 ## Acknowledgements
 
