@@ -1,12 +1,17 @@
-const FILES_URL = '/words.b64.txt';
 const MAX_RESULTS = 400;
 const OUTPUT_SCROLL_THRESHOLD = 0.8;
+ALLOWED_PATHS = ['4', '6', '7', '8']
+
+/** Get number of characters based on path */
+const path = window.location.pathname.replace('/', '');
+const numCharsPath = ALLOWED_PATHS.includes(path) ? parseInt(path) : 5;
 
 let wordList;
 
  /** Download and decompress word list */
-function loadWordList() {
-  fetch(FILES_URL)
+function loadWordList(fileUrl) {
+  console.log(`Getting word list from ${fileUrl}`);
+  fetch(fileUrl)
     .then(response => response.text())
     .then(data => {
       wordList = atob(data).split(',')
@@ -57,7 +62,10 @@ function submitSearch() {
 
   let matchInput = '';
   const includeList = [];
-  const excludeLists = [[], [], [], [], []];
+  const excludeLists = [];
+  for (let i = 0; i < numCharsPath; i++) {
+    excludeLists.push([]);
+  }
 
   cleanAllMultiInputs();
 
@@ -171,7 +179,10 @@ function shiftFocus(currInput, diff) {
 /** Clean inputs in all multi-input elements */
 function cleanAllMultiInputs() {
   ['matcher', 'includer'].forEach(prefix => {
-    [1, 2, 3, 4, 5].forEach(index => cleanMultiInput(prefix, index));
+    // generate list with values [1, 2, 3 ... numCharsPath]
+    [...Array(numCharsPath).keys()]
+      .map(v => v + 1)
+      .forEach(index => cleanMultiInput(prefix, index));
   });
 }
 
@@ -208,7 +219,9 @@ function getCleanInput(prefix, index, suppressWildcardTranslation) {
 
 /** Execute the provided function for each input in the multi-input container */
 function forEachMultiInputContainer(prefix, func) {
-  [1, 2, 3, 4, 5]
+  // generate list with values [1, 2, 3 ... numCharsPath]
+  [...Array(numCharsPath).keys()]
+    .map(v => v + 1)
     .map(i => document.getElementById(`${prefix}-${i}`))
     .forEach(func);
 }
@@ -285,9 +298,15 @@ function setupMultiInputContainerListers(prefix) {
   });
 }
 
+/** Set up with desired number of characters */
+function setupWithNumChars(numChars) {
+  console.log(`Setting up wordle with ${numChars} characters`);
+  loadWordList(`/data/words-${numChars}ch.b64.txt`)
+  document.body.classList.add(`words-${numChars}ch`)
+}
+
 /** Set listeners */
 function setupListeners() {
-  // TODO this function grew in scope and should be refactored
   document.getElementById('search').addEventListener('click', submitSearch);
   window.addEventListener('resize', updateFooterFloat);
   window.addEventListener('keyup', event => {
@@ -302,7 +321,7 @@ function setupListeners() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadWordList();
+  setupWithNumChars(numCharsPath);
   setupListeners();
   updateFooterFloat();
 });

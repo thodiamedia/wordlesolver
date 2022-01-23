@@ -131,7 +131,7 @@ fieldset {
 }
 
 .multi-input-container > div input[type=text] {
-  width: max(4em, 20%);
+  width: max(4em, 25%);
   text-align: center;
 }
 
@@ -157,6 +157,40 @@ fieldset {
 #search:active {
   transform: scale(1.2);
   background-color: #86c5d8;
+}
+
+#matcher-6,
+#matcher-7,
+#matcher-8,
+#includer-6,
+#includer-7,
+#includer-8,
+.words-4ch #matcher-5,
+.words-4ch #includer-5 {
+  display: none;
+}
+
+.words-6ch #matcher-6,
+.words-6ch #includer-6,
+.words-7ch #matcher-6,
+.words-7ch #matcher-7,
+.words-7ch #includer-6,
+.words-7ch #includer-7,
+.words-8ch #matcher-6,
+.words-8ch #matcher-7,
+.words-8ch #matcher-8,
+.words-8ch #includer-6,
+.words-8ch #includer-7,
+.words-8ch #includer-8 {
+  display: block;
+}
+
+@media screen and (max-width: 600px) {
+  .words-7ch .includer-inputs-container input[type=text],
+  .words-8ch .includer-inputs-container input[type=text] {
+    padding: 0.55em 0;
+    font-size: 1em;
+  }
 }
 
 /* Output Styles */
