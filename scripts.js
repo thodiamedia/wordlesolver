@@ -314,10 +314,10 @@ function setupWithNumChars(numChars) {
 function setupListeners() {
   document.getElementById('search').addEventListener('click', submitSearch);
   window.addEventListener('resize', updateFooterFloat);
-  window.addEventListener('keyup', event => {
-    if (event.key === 'enter') {
+  window.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
       // search when enter is pressed
-      event.preventDefault();
+      e.preventDefault();
       submitSearch();
     }
   });
