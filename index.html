@@ -30,8 +30,8 @@
       <p>Easy, fast Wordle solver!</p>
     </header>
     <main>
-      <fieldset class="input-container matcher-container">
-        <legend>Matcher</legend>
+      <fieldset class="input-container multi-input-container matcher-container">
+        <legend>Green Tiles</legend>
         <div class="matcher-inputs-container">
           <input id="matcher-1" type="text" maxlength="1" value="?" />
           <input id="matcher-2" type="text" maxlength="1" value="?" />
@@ -39,19 +39,23 @@
           <input id="matcher-4" type="text" maxlength="1" value="?" />
           <input id="matcher-5" type="text" maxlength="1" value="?" />
         </div>
-        <span>Enter the known letters, with ? for unknown letters</span>
+        <span>Enter the letters with known positions, with ? for unknown letters</span>
       </fieldset>
 
-      <div class="flex-break"></div>
-
-      <div class="input-container include-container">
-        <label for="include">Included Letters</label>
-        <input id="include" type="text" />
-        <span>Enter all the letters that should be included</span>
-      </div>
+      <fieldset class="input-container multi-input-container includer-container">
+        <legend>Yellow Tiles</legend>
+        <div class="includer-inputs-container">
+          <input id="includer-1" type="text" />
+          <input id="includer-2" type="text" />
+          <input id="includer-3" type="text" />
+          <input id="includer-4" type="text" />
+          <input id="includer-5" type="text" />
+        </div>
+        <span>Enter letters which do not belong in each position</span>
+      </fieldset>
 
       <div class="input-container exclude-container">
-        <label for="exclude">Excluded Letters</label>
+        <label for="exclude">Gray Tiles</label>
         <input id="exclude" type="text" />
         <span>Enter all the letters that should be excluded</span>
       </div>

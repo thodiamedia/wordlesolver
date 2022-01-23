@@ -63,11 +63,6 @@ header > h1,
   text-transform: uppercase;
 }
 
-.flex-break {
-  height: 0;
-  width: 100%;
-}
-
 /* Header Styles */
 
 header {
@@ -91,16 +86,12 @@ main {
 
 /* Search Styles */
 
-.include-container,
-.exclude-container {
-  flex: 1;
-}
-
 #output {
   min-width: 100%;
 }
 
 .input-container {
+  width: 100%;
   margin-bottom: var(--standard-margin);
 }
 
@@ -128,18 +119,18 @@ fieldset {
   border: 0;
 }
 
-.matcher-container {
+.multi-input-container {
   width: auto;
   align-self: center;
   margin-bottom: var(--vertical-margin);
 }
 
-.matcher-inputs-container {
+.multi-input-container > div {
   display: flex;
   flex-direction: row;
 }
 
-.matcher-inputs-container input[type=text] {
+.multi-input-container > div input[type=text] {
   width: max(4em, 20%);
   text-align: center;
 }

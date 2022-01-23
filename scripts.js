@@ -21,24 +21,24 @@ function loadWordList() {
 /**
  * Get arrays of words which match the provided criteria
  * @param {string} matchStr Regex for matching
- * @param {string[]} includeList Array of characters which must be included
- * @param {string[]} excludeList Array of characters which must be excluded
+ * @param {string[]} includeList Array of characters which must be included in the word, if provided
+ * @param {string[][]} excludeLists Array of arrays of characters which must be excluded at each position
  * @returns Array of matching words
  */
-function getMatchingWords(matchStr, includeList, excludeList) {
-  console.log('getMatchingWords', matchStr, includeList, excludeList);
+function getMatchingWords(matchStr, includeList, excludeLists) {
+  console.log('getMatchingWords', matchStr, JSON.stringify(excludeLists));
   const matchRegex = new RegExp(matchStr);
   return wordList
     // filter to words which match the matchStr
     .filter(word => matchRegex.test(word))
-    // filter to words that contain all in the includeList, if provided
-    .filter(word => includeList.length === 0 || includeList.every(char => word.includes(char)))
     // filter to words where no character is in the excludeList  
-    .filter(word => word.split('').every(char => !excludeList.includes(char)));
+    .filter(word => word.split('').every((char, idx) => excludeLists[idx].every(excludedChar => excludedChar !== char)))
+    // filter to words that contain all in the includeList, if provided
+    .filter(word => includeList.length === 0 || includeList.every(char => word.includes(char)));
 }
 
-/** Return list of valid characters from input string */
-function getPreparedInput(inputStr) {
+/** Return list of valid lower-case characters from input string */
+function toLowerSplit(inputStr) {
   return inputStr
     .toLowerCase()
     .replace(/[^a-z]/g, '')
@@ -55,18 +55,31 @@ function submitSearch() {
     return;
   }
 
-  // get matcher input
-  cleanMatcherElements();
   let matchInput = '';
-  forEachMatcherInput(matcherInput => matchInput += matcherInput.value);
-  const includeInput = document.getElementById('include').value;
-  const excludeInput = document.getElementById('exclude').value;
+  const includeList = [];
+  const excludeLists = [[], [], [], [], []];
+
+  cleanAllMultiInputs();
+
+  // green tiles - set up regex
+  forEachMultiInputContainer('matcher', matcherInput => matchInput += matcherInput.value);
+  matchInput = matchInput.toLowerCase().replaceAll('?', '.');
+
+  // yellow tiles - add to include list and specific exclude lists
+  forEachMultiInputContainer('includer', (includerInput, index) => {
+    excludeLists[index].push(...toLowerSplit(includerInput.value))
+    includeList.push(...toLowerSplit(includerInput.value));
+  });
+
+  // gray tiles - add to all exclude lists
+  const excludeInput = toLowerSplit(document.getElementById('exclude').value);
+  excludeLists.forEach(excludeList => excludeList.push(...excludeInput));
 
   // get results
   let results = getMatchingWords(
-    matchInput.toLowerCase().replaceAll('?', '.'),
-    getPreparedInput(includeInput),
-    getPreparedInput(excludeInput)
+    matchInput,
+    includeList,
+    excludeLists
   );
 
   // remove all previous results
@@ -152,27 +165,121 @@ function shiftFocus(currInput, diff) {
   return desiredElement;
 }
 
-/** Clean inputs in matcher elements */
-function cleanMatcherElements() {
-  forEachMatcherInput(matcherInput => {
-    const value = matcherInput.value;
-    if (value === '') {
-      matcherInput.value = '?';
-    }
-    if (/[a-z]/.test(value)) {
-      matcherInput.value = value.toUpperCase();
-    }
-    if (!/[A-Za-z?]/.test(value)) {
-      matcherInput.value = '?';
-    }
+/** Clean inputs in all multi-input elements */
+function cleanAllMultiInputs() {
+  ['matcher', 'includer'].forEach(prefix => {
+    [1, 2, 3, 4, 5].forEach(index => cleanMultiInput(prefix, index));
   });
 }
 
-/** Execute the provided function, passing in each matcher input */
-function forEachMatcherInput(func) {
+/** Clean inputs in specific multi-input element */
+function cleanMultiInput(prefix, index, suppressWildcardTranslation) {
+  const inputElement = document.getElementById(`${prefix}-${index}`);
+  inputElement.value = getCleanInput(prefix, index, suppressWildcardTranslation);
+}
+
+/** Get clean value for multi-input element */
+function getCleanInput(prefix, index, suppressWildcardTranslation) {
+  const isMatcher = prefix === 'matcher';
+  const isIncluder = prefix === 'includer';
+  const inputElement = document.getElementById(`${prefix}-${index}`);
+  let value = inputElement.value;
+
+  if (isMatcher) {
+    if (value === '') {
+      value = '?';
+    }
+    if (/[a-z]/.test(value)) {
+      value = value.toUpperCase();
+    }
+    if (!suppressWildcardTranslation && !/[A-Za-z?]/.test(value)) {
+      value = '?';
+    }
+  }
+  else if (isIncluder) {
+    value = value.toUpperCase().replace(/[^A-Z]/g, '');
+  }
+
+  return value;
+}
+
+/** Execute the provided function for each input in the multi-input container */
+function forEachMultiInputContainer(prefix, func) {
   [1, 2, 3, 4, 5]
-    .map(i => document.getElementById(`matcher-${i}`))
+    .map(i => document.getElementById(`${prefix}-${i}`))
     .forEach(func);
+}
+
+function setupMultiInputContainerListers(prefix) {
+  const isMatcher = prefix === 'matcher';
+  const isIncluder = prefix === 'includer';
+
+  forEachMultiInputContainer(prefix, (inputElement, index) => {
+    // left/right arrow keys should move between inputs
+    inputElement.addEventListener('keyup', e => {
+      if (isMatcher && e.key === 'ArrowLeft') {
+        e.preventDefault();
+        shiftFocus(inputElement, -1);
+      }
+      if (isMatcher && e.key === 'ArrowRight') {
+        e.preventDefault();
+        shiftFocus(inputElement, 1);
+      }
+      if (isIncluder) {
+        cleanMultiInput(prefix, index + 1);
+      }
+    });
+
+    inputElement.addEventListener('keydown', e => {
+      if (isIncluder) {
+        return;
+      }
+
+      let translatedKeyValue = null;
+
+      // do not input invalid characters
+      if (!/[A-Za-z?]/.test(e.key)) {
+        translatedKeyValue = '';
+      }
+
+      // convert to uppercase
+      if (e.key.length === 1 && /[a-z]/.test(e.key)) {
+        translatedKeyValue = e.key.toUpperCase();
+      }
+
+      // update current field with translated input
+      if (translatedKeyValue !== null && inputElement.selectionStart === 0) {
+        inputElement.value = translatedKeyValue;
+        e.preventDefault();
+        return;
+      }
+
+      if (isIncluder) {
+        return;
+      }
+
+      // update next field with current or translated input
+      if (
+        // if input is valid or translated:
+        ((translatedKeyValue !== null && translatedKeyValue !== '')
+        || (e.key.length === 1 && /[A-Za-z?]/.test(e.key)))
+        // if selection is at end of current textbox:
+        && inputElement.selectionStart === 1
+      ) {
+        const newFocusedInput = shiftFocus(inputElement, 1);
+        if (newFocusedInput !== null) {
+          newFocusedInput.value = translatedKeyValue;
+        }
+      }
+    });
+    if (isMatcher) {
+      inputElement.addEventListener('click', e => e.target.select());
+      inputElement.addEventListener('focus', e => e.target.select());
+    }
+
+     // prevent clicking with mac touchpad always resulting in right-click
+     inputElement.addEventListener('contextmenu', e => e.preventDefault());
+  });
 }
 
 /** Set listeners */
@@ -187,57 +294,8 @@ function setupListeners() {
       submitSearch();
     }
   });
-  forEachMatcherInput(matcherInput => {
-    matcherInput.addEventListener('keyup', e => {
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        shiftFocus(matcherInput, -1);
-      }
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        shiftFocus(matcherInput, 1);
-      }
-    });
-    matcherInput.addEventListener('keydown', e => {
-      let translatedKeyValue = null;
-
-      // do not input invalid characters
-      if (!/[A-Za-z?]/.test(e.key)) {
-        translatedKeyValue = '';
-      }
-
-      // convert to uppercase
-      if (e.key.length === 1 && /[a-z]/.test(e.key)) {
-        translatedKeyValue = e.key.toUpperCase();
-      }
-
-      // update current field with translated input
-      if (translatedKeyValue !== null && matcherInput.selectionStart === 0) {
-        matcherInput.value = translatedKeyValue;
-        e.preventDefault();
-        return;
-      }
-
-      // update next field with current or translated input
-      if (
-        // if input is valid or translated:
-        ((translatedKeyValue !== null && translatedKeyValue !== '')
-        || (e.key.length === 1 && /[A-Za-z?]/.test(e.key)))
-        // if selection is at end of current textbox:
-        && matcherInput.selectionStart === 1
-      ) {
-        const newFocusedInput = shiftFocus(matcherInput, 1);
-        if (newFocusedInput !== null) {
-          newFocusedInput.value = translatedKeyValue;
-        }
-      }
-    });
-    matcherInput.addEventListener('click', e => e.target.select());
-    matcherInput.addEventListener('focus', e => e.target.select());
-
-     // prevent clicking with mac touchpad always resulting in right-click
-    matcherInput.addEventListener('contextmenu', e => e.preventDefault());
-  });
+  setupMultiInputContainerListers('matcher');
+  setupMultiInputContainerListers('includer');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
