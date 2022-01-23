@@ -1,5 +1,5 @@
 const FILES_URL = '/words.b64.txt';
-const MAX_RESULTS = 200;
+const MAX_RESULTS = 400;
 const OUTPUT_SCROLL_THRESHOLD = 0.8;
 
 let wordList;
