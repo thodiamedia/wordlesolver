@@ -67,7 +67,7 @@ function submitSearch() {
     excludeLists.push([]);
   }
 
-  cleanAllMultiInputs();
+  cleanAllInputs();
 
   // green tiles - set up regex
   forEachMultiInputContainer('matcher', matcherInput => matchInput += matcherInput.value);
@@ -177,26 +177,28 @@ function shiftFocus(currInput, diff) {
 }
 
 /** Clean inputs in all multi-input elements */
-function cleanAllMultiInputs() {
+function cleanAllInputs() {
   ['matcher', 'includer'].forEach(prefix => {
     // generate list with values [1, 2, 3 ... numCharsPath]
     [...Array(numCharsPath).keys()]
       .map(v => v + 1)
       .forEach(index => cleanMultiInput(prefix, index));
   });
+  document.getElementById('exclude').value = getCleanInput('exclude');
 }
 
 /** Clean inputs in specific multi-input element */
 function cleanMultiInput(prefix, index, suppressWildcardTranslation) {
-  const inputElement = document.getElementById(`${prefix}-${index}`);
+  const inputElement = document.getElementById(index !== undefined ? `${prefix}-${index}` : prefix);
   inputElement.value = getCleanInput(prefix, index, suppressWildcardTranslation);
 }
 
-/** Get clean value for multi-input element */
+/** Get clean value for excluder element */
 function getCleanInput(prefix, index, suppressWildcardTranslation) {
   const isMatcher = prefix === 'matcher';
   const isIncluder = prefix === 'includer';
-  const inputElement = document.getElementById(`${prefix}-${index}`);
+  const isExclude = prefix === 'exclude';
+  const inputElement = document.getElementById(index !== undefined ? `${prefix}-${index}` : prefix);
   let value = inputElement.value;
 
   if (isMatcher) {
@@ -211,6 +213,9 @@ function getCleanInput(prefix, index, suppressWildcardTranslation) {
     }
   }
   else if (isIncluder) {
+    value = value.toUpperCase().replace(/[^A-Z]/g, '');
+  }
+  else if (isExclude) {
     value = value.toUpperCase().replace(/[^A-Z]/g, '');
   }
 
@@ -318,6 +323,9 @@ function setupListeners() {
   });
   setupMultiInputContainerListers('matcher');
   setupMultiInputContainerListers('includer');
+  document.getElementById('exclude').addEventListener('keyup', e => {
+    cleanMultiInput('exclude');
+  });
   document.getElementById('menu-btn').addEventListener('click', () => document.body.classList.toggle('show-nav'));
 }
 
