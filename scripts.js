@@ -1,5 +1,6 @@
 const FILES_URL = '/words.b64.txt';
 const MAX_RESULTS = 200;
+const OUTPUT_SCROLL_THRESHOLD = 0.8;
 
 let wordList;
 
@@ -42,6 +43,9 @@ function getPreparedInput(inputStr) {
 
 /** Submit a search and displays results */
 function submitSearch() {
+  // footer should stop floating once search is pressed
+  document.getElementById('footer').classList.remove('floating');
+
   if (!wordList) {
     displayError('We are still loading the word dictionary, please try searching again');
     return;
@@ -74,6 +78,13 @@ function submitSearch() {
 
   if (results.length > MAX_RESULTS) {
     displayError(`Excluded ${results.length - MAX_RESULTS} additional results.`, true);
+  }
+
+  // scroll to output section if it is low enough on screen
+  const outputTopPos = output.getBoundingClientRect().top;
+  const windowHeight = window.innerHeight;
+  if (outputTopPos >= windowHeight * OUTPUT_SCROLL_THRESHOLD) {
+    output.scrollIntoView({ 'behavior': 'smooth' });
   }
 }
 
