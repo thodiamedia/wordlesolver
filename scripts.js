@@ -62,7 +62,7 @@ function submitSearch() {
 
   // get results
   let results = getMatchingWords(
-    getPreparedInput(matchInput),
+    matchInput.toLowerCase(),
     getPreparedInput(includeInput),
     getPreparedInput(excludeInput)
   );
