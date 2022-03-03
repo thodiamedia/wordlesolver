@@ -2,7 +2,7 @@
 
 This is the branch for a Wordle Solver using a Repl/Flask backend. You may set up a Repl project, move over the files `static/*`, `templates/*`, `main.py`, and `assignment.py`, then run! As long as `assignment.py` is implemented according to the specification provided in the PDF file, you should have a nice interactive frontend for your intro Python assignment!
 
-[Try it yourself at clickertest.andreybutenko1.repl.co](https://clickertest.andreybutenko1.repl.co/)!
+[Try it yourself at wordle-solver-flask.andreybutenko1.repl.co](https://wordle-solver-flask.andreybutenko1.repl.co/)!
 
 ## Navigating the Repo
 
@@ -14,7 +14,7 @@ wordle.tools is a straightforward project:
 * `local-server.py`: Local web server for development.
 * `main.py`: Web server for Repl.
 * `assignment.py`: File to implement assignment.
-* PDF: Assignment description.
+* `docs/`: Assignment description.
 
 ## Local Development
 
