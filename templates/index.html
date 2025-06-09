@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png" href="/assets/wordle.tools-logo.png" />
+    <title>Wordle Solver - Wahluke TEALS 2022</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <header>
+      </button>
+      <h1>Wordle Solver</h1>
+      <p>Wahluke TEALS 2022</p>
+    </header>
+
+    <main>
+      <fieldset class="input-container multi-input-container matcher-container">
+        <legend>Format</legend>
+        <div class="matcher-inputs-container">
+          <input id="matcher-1" type="text" maxlength="1" value="" />
+          <input id="matcher-2" type="text" maxlength="1" value="" />
+          <input id="matcher-3" type="text" maxlength="1" value="" />
+          <input id="matcher-4" type="text" maxlength="1" value="" />
+          <input id="matcher-5" type="text" maxlength="1" value="" />
+        </div>
+        <span>Enter the letters with known positions, with blanks for unknown letters</span>
+      </fieldset>
+
+      <div class="input-container exclude-container">
+        <label for="exclude">Excluded</label>
+        <input id="exclude" type="text" />
+        <span>Enter all the letters that should be excluded</span>
+      </div>
+
+      <button id="search">Search</button>
+
+      <div id="output"></div>
+    </main>
+
+    <script src="/static/scripts.js"></script>
+  </body>
+</html>
